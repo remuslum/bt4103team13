@@ -7,15 +7,15 @@ Given a candidate resume and a query of desired role, identify the skill gap bet
 
 ## What is this project for?
 
-This project is a testing playground that I used to record all the progress and how I solve the problems accordingly. 
+This project is a testing playground that was used to record all progress for the project and how to solve the problems accordingly. 
 
 ## Process
 
 ### Step 1 Skills Extraction
 
-In order to efficiently extract skills out from the resume, use free online **Emsi Skills** api to get the list of available skills. 
+In order to efficiently extract skills out from the resume, use free online **EMSI Skills** api to get the list of available skills. 
 
-- **Emsi Skills API**
+- **EMSI Skills API**
 
     Example: calling the API endpoint using Python. The detailed documentation is given [Here]([Link text Here](https://link-url-here.org))
 
@@ -53,9 +53,9 @@ In order to efficiently extract skills out from the resume, use free online **Em
 
 ### Step 2 Identification of Year of Experience
 
-The output shown above is implicitly indicating that all the skills have the same experience level. This is undesirable as there are much more information in the resume that can be used to weigh the skills differently, e.g. project period. 
+The output shown above is implicitly indicating that all the skills have the same experience level. This is undesirable as there is much more information in the resume that can be used to weigh the skills differently, e.g. project period. 
 
-In order to weigh each skill differently based on the project period, I first assumed that:
+In order to weigh each skill differently based on the project period, we assumed that:
 - All the experience levels are using `year(s)` as unit.
 - All the skills extracted from the resume have at least 1 year of experience.
 - The project description shall come after the project period.
@@ -74,9 +74,9 @@ experience_tagging(date_list)
 # {10: [(981, 1066)], 4: [(1996, 3608)], 3: [(3635, -1)]}
 ```
 
-## Step 3 Experience Level Tagging
+### Step 3 Experience Level Tagging
 
-I looped through each section and extract all the skills out, then label all these skills with the corresponding years of experience. For all the other skills that are found not within any section, we just tag the year of experience to be 1. 
+We looped through each section and extract all the skills out, then tag all these skills with the corresponding years of experience. For all the other skills that are not found within any sections, we just tag the year of experience to be 1. 
 
 Example: extract all the skills with corresponding years from a resume. The output is in a Python
 dictionary.
@@ -105,16 +105,20 @@ skills_experience_level_identification(resume_string)
 # }
 ```
 
-## Step 4: Identification of Significant Skills
+### Step 4: Identification of Significant Skills
 
-We first assumed that all the candidates that are applying for a specific role **must** be qualified, i.e. they have all the skills required for the particular role. With this assumption, we can do aggregation for all the resumes that belong to the same category and find out the percentage of the resumes having certain skills. High percentage indicates that they are the common skills required for the particular role. 
+There are 2 sets of documents that significant skills can be identified from, job-description documents and resume documents.
+- From job-description documents, we extract the required skills to meet current industry standards.
+- From resume documents, we extract the required skills to standout among peers in the same industry. Assumption: all candidates applying for the specific role **must** be qualified, i.e. they have all the skills required for the particular role. 
 
-We then set the significance level $\alpha$ as .95, hence all the skills below 95 percentile will be treated as not so significant. 
+Aggregation is performed on all documents that belong to the same category to find out the frequency of documents that have each specified skill. High frequency indicates that they are the common skills required for the particular role. 
 
-Example: We use the **percentile** method to set the threshold for classifying the skills that appear at least once, and decide if they are significant or not. Then, we scale the skills' frequency to the range of [0, 1]. This is to help us to decide whether if we need high level of skill competency to standout from peers. We save all the remaining skill with the corresponding competency level required into a dictionary
+We then set the significance level $\alpha$ as .95, hence all the skills below 95 percentile will be treated as not so significant. The remaining frequencies are scaled to the range of [0, 1] to help us decide on the competency level to be given to each skill.
+
+Example: We use the **percentile** method to set the threshold for classifying the skills significance level. We save all these remaining skills with the corresponding competency level required into a dictionary.
 
 ```   
-# Output: where the value is the competency level based on my client's business settings
+# Output: where the value is the competency level based on the client's business settings.
 # {'ADVOCATE': 
 #  {'active listening': 3,
 #   'administrative support': 3,
@@ -133,11 +137,11 @@ Example: We use the **percentile** method to set the threshold for classifying t
 # }
 ```
 
-## Step 5: Identification of Skill Gap
+### Step 5: Identification of Skill Gap
 
-With the significant skills identified for each industry, we can now make comparison between your skillset and the skillset required for the particular industry. We can do that by first mapping the years of experience into **pre-defined competency levels: 3 for entrant level, 4 for specialist level and 5 for expert level.**
+With the significant skills identified for each industry, we can now make comparison between your skillset and the skillset required for a particular industry. We can do that by first mapping the years of experience into **pre-defined competency levels: 3 for entrant level, 4 for specialist level and 5 for expert level.** Then a simple intersection is performed to get the skills gap, i.e. $\text{Required Level 5} - \text{User Level 3} = \text{Skills Gap [4,5]}$.
 
-Example: The output will be a dictionary with skills as the `keys` and the skill gaps as the `values`
+Example: The output will be a dictionary with skills as the `keys` and the skills gap as the `values`
 
 ```
 skill_gap_identification_peers(skills[31605080], skills_required['AVIATION'])
@@ -161,9 +165,9 @@ skill_gap_identification_peers(skills[31605080], skills_required['AVIATION'])
 # }
 ```
 
-## Step 6: Generating The Learning Path
+### Step 6: Generating The Learning Path
 
-Once we successfully found out the skill gap between an applicant with the job and peer standard, we can suggest the applicant to **job** and **continuous learning** programmes which help the applicant to fulfill the skill gap, and even outperforming the peers in the specific industry. 
+Once we successfully find out the skills gap between an applicant and the job and peer standards, we can suggest the applicant to **job** and **continuous learning** programmes which help the applicant to fulfill the skills gap and even outperforming their peers in the specific industry. 
 
 Example: We infer skills required in a vector form using Doc2Vec and find the top 5 unique most similar courses
 
@@ -183,3 +187,25 @@ Example: We infer skills required in a vector form using Doc2Vec and find the to
 #        }
 # }
 ```
+
+## Final Function
+
+The Final Function is a single function that takes in a user's resume and desired industry/job name to output a learning pathway to fulfill their skills gap idenitified. Refer to **Section 6** of `Skills Engine.ipynb` for the following information.
+
+**6.1** contains the Python Libraries required to run this final function.
+
+**6.2** contains the Helper Functions that make up this final function.
+
+**6.3** contains the Pre-Training Codes that will create the pickle files required for the final function to run. Can be used to reproduce this resources whenever there is any change to their sources.
+- **`skills_api.pkl`** used in skills extraction, created from `all_skills_emsi.xlsx`.
+- **`resume_skills_required.pkl`** used in skills gap identification, created from `Resume.csv`.
+- **`job_skills_required.pkl`** used in skills gap identification, created from `Job Description.csv`.
+- **`d2v_model.pkl`** used in learning pathway generation, trained from `Courses.xlsx`.
+
+**6.4** contains the Final Function with detailed comments.
+```
+final_course_suggestion_d2v(resume_text, 'INFORMATION-TECHNOLOGY', 'Software Developers, Applications',
+                            skills_api, resume_skills_required_pickle, job_skills_required_pickle, 
+                            courses_dataset, doc2vec_model, True)
+```
+
