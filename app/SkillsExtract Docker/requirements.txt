@@ -1,0 +1,5 @@
+aspose_words==23.1.0
+boto3==1.26.102
+numpy==1.24.1
+pandas==1.5.2
+spacy==3.5.0
