@@ -61,8 +61,11 @@ In order to weigh each skill differently based on the project period, we assumed
 - The project description shall come after the project period.
 - The year of experience is computed by taking the ceiling of the year difference, i.e. $\text{difference in time} // \text{365 days} + 1$
 - When there are multiple projects of different periods having the same skill, the experience level will be computed by $max(\text{years of project 1}, \text{years of project 2}...)$.
+- The title of a section is an **uppercased Noun**
 
-Example: extract all the sections out using date range as guidance from a resume.
+We will first break down the resume text into sections using *title*, for each section, we then break down the paragraph into subsections using *date range*
+
+Example: extract all the sections and subsections out using title and date range as guidance from a resume.
 
 ```
 experience_tagging(date_list)
@@ -76,7 +79,7 @@ experience_tagging(date_list)
 
 ### Step 3 Experience Level Tagging
 
-We looped through each section and extract all the skills out, then tag all these skills with the corresponding years of experience. For all the other skills that are not found within any sections, we just tag the year of experience to be 1. 
+We looped through each section and subsection to extract all the skills out, then tag all these skills with the corresponding years of experience. For all the other skills that are not found within any sections, we just tag the year of experience to be 1. 
 
 Example: extract all the skills with corresponding years from a resume. The output is in a Python
 dictionary.
