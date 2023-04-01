@@ -38,12 +38,12 @@ def lambda_handler(event, context):
     # print('done reading resume')
     # resume_string = read_resume(file_content)
     # print(resume_string)
-    if 'doc' not in event:
+    if 'doc' not in event["queryStringParameters"]:
         return {
         'statusCode': 400,
         'body': json.dumps("'doc' not found in the keys of request")
     }
-    resume_string = event['doc']
+    resume_string = event["queryStringParameters"]['doc']
     res = skills_experience_level_identification(resume_string, skills_api)
     # try:
     #     response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
