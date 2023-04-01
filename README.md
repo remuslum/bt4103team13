@@ -212,3 +212,32 @@ final_course_suggestion_d2v(resume_text, 'INFORMATION-TECHNOLOGY', 'Software Dev
                             courses_dataset, doc2vec_model, True)
 ```
 
+## How to Build and Tag a Docker Image?
+
+Due to the time remaining for devlopment is limited and we need to start compiling and documenting all the source codes, the current limitation is:
+ - we do not have the access to directly call PUT request to save a pdf file to S3 bucket via API Gateway
+ - we do not have the access to read pdf files from S3 bucket via Lambda (errorMessage: *when calling GetObject operation: Access Denied*)
+
+Hence, we decided to use GET request with the key to be `doc` and the value to be *resume_string*. This can be easily modified to only take the pdf filename once the access to read files from S3 bucket is given. 
+
+Follow the instructions below to build the Docker image:
+
+ 1. Make sure that you have the latest version of the AWS CLI and Docker installed.
+ 2. Type `aws configure` in cmd and specify the correct Access Key ID and Secret Access Key. They can be found from AWS IAM.
+ 3. Type `cd "path_to_folder/bt4103team13/app/SkillsExtract Docker"`
+ 4. Retrieve an authentication token and authenticate your Docker client to your registry. Further details can be referred from AWS ECR repository -> *view push commands*
+ 5. The current directory structure shall be:
+```
+SkillsExtract Docker
+|__ /app
+|__ Dockerfile
+|__ requirements.txt
+```
+ 6. Type `docker build -t skills-engine .`
+ 7. Further details can be referred from AWS ECR repository -> *view push commands*
+
+
+
+
+
+
