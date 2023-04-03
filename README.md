@@ -9,6 +9,10 @@ Given a candidate resume and a query of desired role, identify the skill gap bet
 
 This project is a testing playground that was used to record all progress for the project and how to solve the problems accordingly. 
 
+## Instructions to run the notebook
+
+Place all the files in `./app/datasets/` and `./app/pkl_files/` in the same directory level as `./app/Skills Engine.ipynb`. Sections 1 to 5 are the walkthrough sections while Section 6 is the final compilation of all the functions.
+
 ## Process
 
 ### Step 1 Skills Extraction
@@ -224,7 +228,7 @@ Follow the instructions below to build the Docker image:
 
  1. Make sure that you have the latest version of the AWS CLI and Docker installed.
  2. Type `aws configure` in cmd and specify the correct Access Key ID and Secret Access Key. They can be found from AWS IAM.
- 3. Type `cd "path_to_folder/bt4103team13/app/SkillsExtract Docker"`
+ 3. Type `cd "<path_to_folder>/bt4103team13/app/SkillsExtract Docker"`
  4. Retrieve an authentication token and authenticate your Docker client to your registry. Further details can be referred from AWS ECR repository -> *view push commands*
  5. The current directory structure shall be:
 ```
@@ -235,6 +239,14 @@ SkillsExtract Docker
 ```
  6. Type `docker build -t skills-engine .`
  7. Further details can be referred from AWS ECR repository -> *view push commands*
+
+The current Docker Image only includes the function to extract skills and corresponding years of experience for the demonstration purpose. To include more `lambda_handler` to show skill gap and recommended courses, follow the instructions below:  
+
+ 1. Replace `./app/SkillsExtract Docker/requirements.txt` with `./app/requirements.txt`
+ 2. Replace `./app/SkillsExtract Docker/app/functions.py` with `./app/functions.py`
+ 3. Create other `.py` files that contain the `lambda_handler` in the same directory level as `./app/SkillsExtract Docker/app/lambda_function.py`
+ 4. Add all the other necessary `.pkl` files to the current directory level from `./app/pkl_files`
+ 5. Modify `./app/SkillsExtract Docker/Dockerfile` correspondingly to be able to call different `lambda_handlers`
 
 
 
