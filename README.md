@@ -249,7 +249,31 @@ The current Docker Image only includes the function to extract skills and corres
  5. Modify `./app/SkillsExtract Docker/Dockerfile` correspondingly to be able to call different `lambda_handlers`
 
 
+## Dashboard
+Code found in `update_dashboard_data/main.py`
 
+### Aim and rationale
+The dashboard found on QuickSight consists of data from two sources: 1. the current model output as represented through top 10 skills (and in the future, top 10 courses), and 2. the metric data from CloudWatch logs that indicates model performance like the number of invocations and the model runtime required to output results.
 
+The aim of this file and its function are to automatically track skills output from the model everytime it is run to update `skills_freq.json` saved in S3, and to pull the latest data from CloudWatch within a time period to update `invocations.json`, `avg_duration.json`, `highest_duration.json` and `errors.json` in the S3 Bucket. The code in this file also reformats the data ingested into a format usable by QuickSight to display the given 
+dashboard with the latest data.
 
+Originally, the function was meant to use `AWS Invoke` to be run every time the model Lambda was run and update the corresponding json files saved in S3. S3 was to be connected to QuickSight so that QuickSight could update the dashboard to the latest results on demand.
 
+However, limitations included:
+- Inadequate permission access to link S3 Bucket to QuickSight for automatic update
+- Unable to deploy API Gateway to test the entire functionality pipeline with integrated dashboard code as Lambda function, and thus unable to use `AWS Invoke` to gain access.
+
+## Instructions to utilise current code to obtain data
+Currently, code must be manually run to update to latest data for dashboard
+1. After running initial model code to get skills output as json, copy-paste the 
+json output to variable `skills_json` in `lambda_handler` function
+2. Navigate to `./update_dashboard_data/main.py` and run `python main.py`.
+3. This will update all json files in the S3 Bucket
+4. Manually download `invocations.json`, `avg_duration.json`, `highest_duration.json`, `errors.json` and `skills_freq.json` into local folder
+5. Manually upload files into QuickSight dashboard for updated data.
+
+## Suggestions for later integration into proper AWS pipeline
+1. Link `nus-sambaash/skills-engine-dashboard` Bucket to QuickSight
+2. Convert functions into suitable Lambda function format by removing `name == main` portion
+3. Use AWS `Invoke` function to link current function to model Lambda function to be triggered together and to also receive skills json output from model function.
